@@ -1,6 +1,7 @@
 import axios from 'axios'
 import vue from 'vue'
 import Router from '@/router'
+
 axios.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.headers.put['Content-Type'] = 'application/json;charset=UTF-8'
@@ -25,7 +26,7 @@ service.interceptors.request.use(
       }
     } else {
       config.headers['Content-Type'] = 'application/json'
-      for(const key in config.data) { // 去参数空格
+      for (const key in config.data) { // 去参数空格
         let str = config.data[key]
         if (typeof str === 'string') {
           config.data[key] = str.replace(/(^\s*)|(\s*$)/g, '')
@@ -33,22 +34,22 @@ service.interceptors.request.use(
           if (Array.isArray(str)) {
             for (let i = 0; i < config.data[key].length; i++) {
               if (typeof config.data[key][i] === 'string') {
-                config.data[key][i] = config.data[key][i].replace(/(^\s*)|(\s*$)/g, "")
+                config.data[key][i] = config.data[key][i].replace(/(^\s*)|(\s*$)/g, '')
               } else {
-                for(const m in config.data[key][i]) {
+                for (const m in config.data[key][i]) {
                   const e = config.data[key][i][m]
                   if (typeof e === 'string') {
-                    config.data[key][i][m] = e.replace(/(^\s*)|(\s*$)/g, "")
+                    config.data[key][i][m] = e.replace(/(^\s*)|(\s*$)/g, '')
                   }
                 }
               }
             }
           } else {
             if (config.data[key] !== null) {
-              for(const l in config.data[key]) {
+              for (const l in config.data[key]) {
                 const h = config.data[key][l]
                 if (typeof h === 'string') {
-                  config.data[key][l] = h.replace(/(^\s*)|(\s*$)/g, "")
+                  config.data[key][l] = h.replace(/(^\s*)|(\s*$)/g, '')
                 }
               }
             }
@@ -66,8 +67,12 @@ service.interceptors.request.use(
 )
 service.interceptors.response.use(
   res => {
-    return res.data
     // console.log(res)
+    if (res.data.meta.status > 300) {
+      vm.$message.error(res.data.meta.msg)
+      return Promise.reject(res.data.meta.msg)
+    }
+    return res.data.data
   },
   error => {
     if (error && error.response) {

@@ -7,11 +7,24 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: 'login'
   },
   {
     path: '/login',
+    name: 'login',
     component: Login
+  },{
+    path: '/home',
+    component: () => import('@/views/home/index')
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/404')
+  },
+  {
+    path: '*',
+    redirect: '404'
   }
 ]
 

@@ -28,8 +28,8 @@ export default {
   data() {
     return {
       ruleForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       rules: {
         username: [
@@ -47,15 +47,11 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$api.login(this.ruleForm).then(res => {
-            // console.log(res)
-            if(!res.data){
-              this.$message.error('用户名或密码错误')
-            }else {
-              this.$message.success('登陆成功')
-            }
+            console.log(res)
+            window.sessionStorage.setItem('token', res.token)
+            this.$router.push('/home')
           })
         } else {
-          console.log('error submit!!');
           return false;
         }
       });
