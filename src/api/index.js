@@ -6,5 +6,8 @@ export default {
   },
   loginOut(){
     return request({ url: ``, method: 'post'})
+  },
+  menus(){
+    return request({ url: `/api/private/v1/menus`, method: 'get' })
   }
 }

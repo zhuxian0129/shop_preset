@@ -10,9 +10,11 @@ const service = axios.create({
   timeout: 90000 // 请求超时时间
 })
 const vm = new vue({})
+// axios 请求拦截器
 service.interceptors.request.use(
   config => {
     let params = null
+    config.headers.Authorization = window.sessionStorage.getItem('token')
     if (config.isFromData) {
       params = new FormData()
       for (const key in config.data) {
