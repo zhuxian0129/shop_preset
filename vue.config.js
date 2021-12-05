@@ -9,7 +9,7 @@ const devServer = {
   inline: false,
   disableHostCheck: true,
   proxy: {
-    '/api/private/v1': { // 权限 微服务
+    '/api/': { // 权限 微服务
       target: 'https://lianghj.top:8888',
       changeOrigin: true
     },

@@ -13,6 +13,7 @@
         <!--    右侧主体区域    -->
         <el-main>
           <nav-bar :list="breadcrumbList"></nav-bar>
+          <br>
           <router-view></router-view>
           <router-link to="/home"></router-link>
         </el-main>

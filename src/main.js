@@ -11,10 +11,23 @@ import '@/assets/css/reset.scss'
 import api from './api/index'
 Vue.prototype.$api = api
 
+import componentsAll from '@/components/index'
+Vue.use(componentsAll)
+
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+const path = ['/login', '/404']
+// 路由导航守卫控制访问权限
+router.beforeEach((to, from, next) =>{
+  // console.log(router.getRoutes())
+  // console.log(to)
+  if(path.includes(to.path)) return next()
+  const pathKey = window.sessionStorage.getItem('token')
+  if(!pathKey) return next('/login')
+  next()
+})
 new Vue({
   router,
   render: h => h(App)
