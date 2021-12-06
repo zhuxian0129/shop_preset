@@ -1,8 +1,8 @@
 <template>
-  <el-dialog title="新增角色" :visible="visible" @close="$emit('cancel')">
+  <el-dialog :title="form.id ? '编辑角色' : '新增角色'" :visible="visible" @close="$emit('cancel')">
     <el-form :model="form" ref="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
       <el-form-item label="用户名" prop="username">
-        <el-input v-model="form.username"></el-input>
+        <el-input :disabled="disabled" v-model="form.username"></el-input>
       </el-form-item>
       <el-form-item prop="email" label="邮箱">
         <el-input v-model="form.email"></el-input>
@@ -10,7 +10,7 @@
       <el-form-item label="手机号" prop="mobile">
         <el-input v-model="form.mobile"></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="password">
+      <el-form-item v-if="!form.id" label="密码" prop="password">
         <el-input v-model="form.password"></el-input>
       </el-form-item>
     </el-form>
@@ -33,6 +33,7 @@ export default {
       type: Object,
       default: function() {
         return {
+          id: '',
           username: '',
           email: '',
           mobile: '',
@@ -73,15 +74,30 @@ export default {
       }
     }
   },
+  computed: {
+    disabled() {
+      return this.form.id ? true : false
+    }
+  },
   methods: {
     confirm(ruleForm) {
       this.$refs[ruleForm].validate((valid) => {
         if (valid) {
-          this.$api.addUser(this.form)
-            .then(res => {
-              console.log(res)
-            })
-          this.$emit('confirmAddUser')
+          let params = null
+          if (this.form.id) {
+            params = {
+              email: this.form.email,
+              id: this.form.id,
+              mobile: this.form.mobile
+            }
+          } else {
+            params = this.form
+          }
+          let $http = this.form.id ? this.$api.editUser : this.$api.addUser
+          $http(params).then(res => {
+            this.$emit('confirm')
+            this.$message.success(this.form.id ? '修改成功' : '新增成功')
+          })
         } else {
           return false;
         }

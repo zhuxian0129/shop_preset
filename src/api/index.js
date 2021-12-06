@@ -18,5 +18,11 @@ export default {
   },
   addUser(data){
     return request({ url: `/api/private/v1/users`, method: 'post', data})
-  }
+  },
+  editUser(data){
+    return request({ url: `/api/private/v1/users/${data.id}`, method: 'put', data})
+  },
+  deleteUser(id){
+    return request({ url: `/api/private/v1/users/${id}`, method: 'delete'})
+  },
 }

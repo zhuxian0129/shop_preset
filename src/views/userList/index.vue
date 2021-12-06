@@ -18,9 +18,9 @@
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button size="mini" icon="el-icon-edit"
-                     @click="handleEdit(scope.$index, scope.row)"></el-button>
+                     @click="openUser(scope.row)"></el-button>
           <el-button size="mini" type="danger" icon="el-icon-delete"
-                     @click="handleDelete(scope.$index, scope.row)"></el-button>
+                     @click="handleDelete(scope.row.id)"></el-button>
           <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
             <el-button size="mini" type="warning" icon="el-icon-setting"
                        @click="handleDelete(scope.$index, scope.row)"></el-button>
@@ -33,8 +33,6 @@
                    layout="total, sizes, prev, pager, next, jumper" :total="params.total">
     </el-pagination>
     <add-user :visible="visible" @cancel="visible = false" :form="form" @confirm="confirmAddUser"></add-user>
-    <!--    <sp-pagination :total="params.total" :page-size="params.pagesize"-->
-    <!--      :current-page="params.pagenum" @sizeChange="sizeChange" @currentChange="currentChange"></sp-pagination>-->
   </div>
 </template>
 
@@ -48,12 +46,13 @@ export default {
     return {
       params: {
         pagenum: 1,
-        pagesize: 2,
+        pagesize: 10,
         query: '',
         total: 0
       },
       userList: [],
       form: {
+        id: '',
         username: '',
         email: '',
         mobile: '',
@@ -78,19 +77,31 @@ export default {
     },
     openUser(data){
       this.form = {
+        id: data ? data.id : '',
         username: data ? data.username : '',
         mobile: data ? data.mobile : '',
         email: data ? data.email : '',
         password: data ? data.password : ''
       }
-      console.log(this.form)
       this.visible = true
     },
-    handleEdit(index, data) {
-      console.log(index, data)
-    },
-    handleDelete() {
-
+    handleDelete(id) {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$api.deleteUser(id)
+          .then(() => {
+            this.search()
+            this.$message.success('删除成功')
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     sizeChange(n) { // 切换一页显示条数的时候触发
       this.params.pagesize = n
@@ -108,11 +119,9 @@ export default {
       })
     },
     confirmAddUser(){
-      console.log(14)
-      // this.$api
-    },
-    cancel(){
-      this.visible = true
+      // console.log(type)
+      this.visible = false
+      this.search()
     }
   },
   created() {
