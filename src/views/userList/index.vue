@@ -6,8 +6,8 @@
     <el-button style="margin-left: 12px;" type="primary" @click="openUser">添加用户</el-button>
     <el-table :loading="loading" :data="userList" border style="width: 100%; margin-top: 10px;" stripe>
       <el-table-column type="index" label="#"></el-table-column>
-      <el-table-column prop="username" label="角色"></el-table-column>
-      <el-table-column prop="role_name" label="用户名"></el-table-column>
+      <el-table-column prop="role_name" label="角色"></el-table-column>
+      <el-table-column prop="username" label="用户名"></el-table-column>
       <el-table-column prop="mobile" label="电话"></el-table-column>
       <el-table-column prop="email" label="邮箱"></el-table-column>
       <el-table-column prop="mg_state" label="状态">
@@ -23,7 +23,7 @@
                      @click="handleDelete(scope.row.id)"></el-button>
           <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
             <el-button size="mini" type="warning" icon="el-icon-setting"
-                       @click="handleDelete(scope.$index, scope.row)"></el-button>
+                       @click="openRoles(scope.row)"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -33,15 +33,16 @@
                    layout="total, sizes, prev, pager, next, jumper" :total="params.total">
     </el-pagination>
     <add-user :visible="visible" @cancel="visible = false" :form="form" @confirm="confirmAddUser"></add-user>
+    <assign-roles :visible="visible1" @cancel="visible1 = false" :userinfo="userinfo" @confirm="confirmAssignRole"></assign-roles>
   </div>
 </template>
 
 <script>
 import addUser from './component/addUser';
-
+import assignRoles from './component/assignRoles';
 export default {
   name: 'userList',
-  components: { addUser },
+  components: { addUser, assignRoles },
   data() {
     return {
       params: {
@@ -58,8 +59,14 @@ export default {
         mobile: '',
         password: ''
       },
+      userinfo: {
+        id: '',
+        username: '',
+        role_name: ''
+      },
       loading: false,
-      visible: false
+      visible: false, // 新增角色
+      visible1: false // 分配角色
     }
   },
   methods: {
@@ -84,6 +91,14 @@ export default {
         password: data ? data.password : ''
       }
       this.visible = true
+    },
+    openRoles(row){
+      this.userinfo = {
+        id: row.id,
+        username: row.username,
+        role_name: row.role_name
+      }
+      this.visible1 = true
     },
     handleDelete(id) {
       this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
@@ -119,8 +134,11 @@ export default {
       })
     },
     confirmAddUser(){
-      // console.log(type)
       this.visible = false
+      this.search()
+    },
+    confirmAssignRole(){
+      this.visible1 = false
       this.search()
     }
   },
