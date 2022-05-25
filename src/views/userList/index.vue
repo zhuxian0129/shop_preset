@@ -33,7 +33,7 @@
                    layout="total, sizes, prev, pager, next, jumper" :total="params.total">
     </el-pagination>
     <add-user :visible="visible" @cancel="visible = false" :form="form" @confirm="confirmAddUser"></add-user>
-    <assign-roles :visible="visible1" @cancel="visible1 = false" :userinfo="userinfo" @confirm="confirmAssignRole"></assign-roles>
+    <assign-roles :visible="visible1" @cancel="visible1 = false" :userinfo="userinfo" @confirm="confirmAssignRole" />
   </div>
 </template>
 
@@ -51,15 +51,15 @@ export default {
         query: '',
         total: 0
       },
-      userList: [],
-      form: {
+      userList: [], // 用户列表
+      form: { // 用户基本信息用
         id: '',
         username: '',
         email: '',
         mobile: '',
         password: ''
       },
-      userinfo: {
+      userinfo: { // 用户角色用
         id: '',
         username: '',
         role_name: ''
@@ -70,11 +70,10 @@ export default {
     }
   },
   methods: {
-    search() {
+    search() { // 条件查找
       const param = this.params
       this.loading = true
-      this.$api.userList(param)
-      .then(res => {
+      this.$api.userList(param).then(res => {
         this.userList = res.users
         this.params.total = res.total
         this.params.query = ''
@@ -82,7 +81,7 @@ export default {
         this.loading = true
       })
     },
-    openUser(data){
+    openUser(data) { // 打开弹窗
       this.form = {
         id: data ? data.id : '',
         username: data ? data.username : '',
@@ -92,7 +91,7 @@ export default {
       }
       this.visible = true
     },
-    openRoles(row){
+    openRoles(row){ // 用户分配角色
       this.userinfo = {
         id: row.id,
         username: row.username,
@@ -100,14 +99,13 @@ export default {
       }
       this.visible1 = true
     },
-    handleDelete(id) {
+    handleDelete(id) { // 删除用户
       this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$api.deleteUser(id)
-          .then(() => {
+        this.$api.deleteUser(id).then(() => {
             this.search()
             this.$message.success('删除成功')
           })
@@ -126,18 +124,17 @@ export default {
       this.params.pagenum = n
       this.search()
     },
-    statusChange(row) {
-      this.$api.mgStateChange(row)
-      .then(res => {
+    statusChange(row) { // 修改用户状态
+      this.$api.mgStateChange(row).then(res => {
         this.search()
         this.$message.success('更新状态成功')
       })
     },
-    confirmAddUser(){
+    confirmAddUser(){ // 新增用户通知
       this.visible = false
       this.search()
     },
-    confirmAssignRole(){
+    confirmAssignRole(){ // 确定角色分配通知
       this.visible1 = false
       this.search()
     }

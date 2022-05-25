@@ -1,15 +1,11 @@
 <template>
-  <el-dialog
-    title="角色分配"
-    :visible="visible"
-    @close="cancel">
+  <el-dialog title="角色分配" :visible="visible" @close="cancel">
     <p>当前用户：{{ userinfo.username }}</p>
     <p>当前角色：{{ userinfo.role_name }}</p>
     <p>分配角色
       <el-select v-model="selectRole" collapse-tags :loading="loading"
-        style="margin-left: 20px;" placeholder="请选择">
-        <el-option v-for="item in roleList" :key="item.id" :label="item.roleName"
-                   :value="item.id">
+                 style="margin-left: 20px;" placeholder="请选择">
+        <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id">
         </el-option>
       </el-select>
     </p>
@@ -32,18 +28,18 @@ export default {
   },
   data(){
     return {
-      roleList: [],
-      selectRole: '',
-      loading: false,
-      submitLoading: false
+      roleList: [], // 角色列表
+      selectRole: '', // 选择的角色
+      loading: false, // 加载等待
+      submitLoading: false // 提交等待
     }
   },
   methods: {
-    cancel() {
+    cancel() { // 取消
       this.selectRole = ''
       this.$emit('cancel')
     },
-    confirm() {
+    confirm() { // 提交
       if(!this.selectRole){
         return this.$message.error('请选择要分配的角色')
       }

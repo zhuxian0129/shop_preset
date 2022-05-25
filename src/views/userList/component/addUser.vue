@@ -43,7 +43,7 @@ export default {
     }
   },
   data() {
-    const mobileExp = (rule, value, callback) => {
+    const mobileExp = (rule, value, callback) => { // 号码校验
       const emailFormat = new RegExp(/^1[3456789]\d{9}$/)
       if (value && !emailFormat.test(value)) {
         callback(new Error('手机号码格式不正确!'));
@@ -80,7 +80,7 @@ export default {
     }
   },
   methods: {
-    confirm(ruleForm) {
+    confirm(ruleForm) { // 提交
       this.$refs[ruleForm].validate((valid) => {
         if (valid) {
           let params = null
